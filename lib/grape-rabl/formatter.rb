@@ -21,10 +21,14 @@ module Grape
 
       def view_path(template)
         if template.split(".")[-1] == "rabl"
-          File.join(env['api.tilt.root'], template)
+          File.join(file_root, template)
         else
-          File.join(env['api.tilt.root'], (template + ".rabl"))
+          File.join(file_root, (template + ".rabl"))
         end
+      end
+
+      def file_root
+        env["api.tilt.root"] || Rails.root.join("app", "views", "api")
       end
 
       def rabl(endpoint)
@@ -37,7 +41,7 @@ module Grape
 
       def rablable?(endpoint)
         if template = endpoint.options[:route_options][:rabl]
-          set_view_root unless env['api.tilt.root']
+          # set_view_root unless env['api.tilt.root']
           template
         else
           false
